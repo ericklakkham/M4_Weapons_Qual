@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Palmmedia.ReportGenerator.Core.Parser.Analysis;
+using TMPro;
 using UnityEditor.TestTools.CodeCoverage;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Begin : MonoBehaviour
 {
@@ -17,13 +19,30 @@ public class Begin : MonoBehaviour
     public Transform target250M;
     public Transform target300M;
 
+    public Text display;
+
     bool sessionInProgress = false;
+    GameObject [] target;
+    Coroutine session;
     
     void Update()
     {
         if (Input.GetKeyUp (KeyCode.R) && !sessionInProgress)
         {
-            StartCoroutine (StartSession ());
+            session = StartCoroutine (StartSession ());
+        }
+
+        if (Input.GetKeyUp (KeyCode.C))
+        {
+            StopCoroutine (session);
+
+            foreach (GameObject t in target)
+            {
+                Destroy (t);
+            }
+
+            sessionInProgress = false;
+            display.text = string.Empty;
         }
     }
 
@@ -31,27 +50,37 @@ public class Begin : MonoBehaviour
     {
         sessionInProgress = true;
 
-        GameObject [] target = new GameObject [40];
+        target = new GameObject [40];
+
+        //Prepare
+        for (int i = 5; i >= 1; i --)
+        {
+            display.text = i.ToString ();
+            yield return new WaitForSeconds (1);
+        }
 
         //Standing, Unsupported
         //Engagement 1
+        display.text = "Standing, Unsupported";
         target [0] = Instantiate (fTypeTarget, target50MRight);
-        yield return new WaitForSeconds (3);
+        yield return new WaitForSeconds (5);
         Destroy (target [0]);
 
+        display.text = "Switch to Prone, Unsupported";
         yield return new WaitForSeconds (5);
 
         //Prone, Unsupported
         //Engagement 2
+        display.text = "Prone, Unsupported";
         target [1] = Instantiate (eTypeTarget, target100M);
-        yield return new WaitForSeconds (3);
+        yield return new WaitForSeconds (5);
         Destroy (target [1]);
 
         yield return new WaitForSeconds (3);
 
         //Engagement 3
         target [2] = Instantiate (eTypeTarget, target150M);
-        yield return new WaitForSeconds (3);
+        yield return new WaitForSeconds (5);
         Destroy (target [2]);
 
         yield return new WaitForSeconds (3);
@@ -78,10 +107,12 @@ public class Begin : MonoBehaviour
         Destroy (target [8]);
         Destroy (target [9]);
 
+        display.text = "Switch to Prone, Supported";
         yield return new WaitForSeconds (10);
 
         //Prone, Supported
         //Engagement 6
+        display.text = "Prone, Supported";
         target [10] = Instantiate (eTypeTarget, target100M);
         yield return new WaitForSeconds (5);
         Destroy (target [10]);
@@ -124,10 +155,12 @@ public class Begin : MonoBehaviour
         Destroy (target [18]);
         Destroy (target [19]);
 
+        display.text = "Switch to Kneeling, Supported";
         yield return new WaitForSeconds (10);
         
         //Kneeling, Supported
         //Engagement 11
+        display.text = "Kneeling, Supported";
         target [20] = Instantiate (eTypeTarget, target50MLeft);
         target [21] = Instantiate (eTypeTarget, target100M);
         target [22] = Instantiate (eTypeTarget, target200M);
@@ -165,10 +198,12 @@ public class Begin : MonoBehaviour
         Destroy (target [28]);
         Destroy (target [29]);
 
+        display.text = "Switch to Standing, Supported";
         yield return new WaitForSeconds (10);
 
         //Standing, Supported
         //Engagement 15
+        display.text = "Standing, Supported";
         target [30] = Instantiate (eTypeTarget, target50MLeft);
         target [31] = Instantiate (eTypeTarget, target100M);
         yield return new WaitForSeconds (8);
@@ -205,6 +240,8 @@ public class Begin : MonoBehaviour
         Destroy (target [37]);
         Destroy (target [38]);
         Destroy (target [39]);
+
+        display.text = string.Empty;
 
         sessionInProgress = false;
     }
